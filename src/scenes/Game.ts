@@ -1,12 +1,12 @@
-import Phaser from 'phaser';
+import PhaserSceneTool from "./PhaserSceneTool"
 
-export default class Demo extends Phaser.Scene {
+class GameScene extends PhaserSceneTool {
   constructor() {
     super('GameScene');
   }
 
   create() {
-    const logo = this.add.image(400, 70, 'logo');
+    const logo = this.add.image(400, 70, 'interpretLogoWithCat');
 
     this.tweens.add({
       targets: logo,
@@ -18,3 +18,5 @@ export default class Demo extends Phaser.Scene {
     });
   }
 }
+
+export default GameScene
