@@ -28,7 +28,7 @@ class Preload extends PhaserSceneTool {
     let progressBar = this.add.graphics();
     let progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
-    progressBox.fillRect(240, 270, 320, 50);
+    // progressBox.fillRect(240, 270, 320, 50);
 
     let width = this.cameras.main.width;
     let height = this.cameras.main.height;
@@ -69,8 +69,8 @@ class Preload extends PhaserSceneTool {
     this.load.on("progress", (value) => {
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
-      progressBar.fillStyle(0xffffff, 1);
-      progressBar.fillRect(250, 280, 300 * value, 30);
+      progressBar.fillStyle(0xffffff, 0.8);
+      progressBar.fillRect(this.gameWidth / 2 - 160, 280, 300 * value, 30);
     });
 
     this.load.on("fileprogress", (file) => {
