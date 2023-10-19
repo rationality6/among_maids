@@ -13,13 +13,13 @@ class Preload extends PhaserSceneTool {
       frameHeight: 32,
     });
 
-    this.loadingImagesMockup();
+    // this.loadingImagesMockup();
 
     // this.load.audio("jumpSound", "assets/sounds/jump.mp3");
   }
 
   loadingImagesMockup() {
-    [...Array(5000).keys()].forEach((i) => {
+    [...Array(100).keys()].forEach((i) => {
       this.load.image(`catWalking${i}`, "assets/cat_walking.png");
     });
   }
@@ -87,6 +87,8 @@ class Preload extends PhaserSceneTool {
   }
 
   create() {
+    const logoExposeSetting: Number = this.isLocal ? 300 : 2000;
+
     this.cameras.main.fadeIn(1000, 255, 255, 255);
 
     const logo = this.add.image(
@@ -97,7 +99,7 @@ class Preload extends PhaserSceneTool {
 
     setTimeout(() => {
       this.scene.start("GameScene");
-    }, 3000);
+    }, logoExposeSetting);
   }
 }
 
