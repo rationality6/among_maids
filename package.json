@@ -1,13 +1,15 @@
 {
-  "name": "phaser3_base",
-  "version": "1.1.2",
-  "description": "Phaser 3 TypeScript Starter",
+  "name": "interpret_base",
+  "version": "1.1.3",
+  "description": "Interpret base code",
   "main": "dist/index.js",
   "scripts": {
     "dev": "vite",
+    "dev-watch": "vite build --watch",
     "build": "vite build --base=./",
     "serve": "vite preview",
-    "deploy": "gh-pages -d dist -b gh-page"
+    "deploy": "gh-pages -d dist -b gh-page",
+    "server": "npx nodemon --inspect server -e html,js,scss --ignore public --ignore client"
   },
   "repository": {
     "type": "git",
@@ -19,12 +21,20 @@
     "url": "https://github.com/rationality6/phaser_base"
   },
   "devDependencies": {
-    "@types/node": "^17.0.31",
     "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-replace": "^4.0.0",
+    "@types/node": "^17.0.31",
+    "nodemon": "^3.0.1",
     "phaser": "^3.55.2",
     "typescript": "^4.6.4",
     "vite": "^4.4.9"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
   }
 }
