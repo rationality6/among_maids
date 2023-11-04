@@ -34,14 +34,14 @@ const createApp = () => {
   });
 
   //   // sends index.html
-  app.use("/", (req, res) => {
+  app.get("/", (req, res, next) => {
     res.sendFile(path.join(__dirname, "..", "dist/index.html"));
   });
 
-    app.use("/foo", (req, res, next) => {
-      console.log("foo");
-      console.log("foo");
-    });
+  app.get("/foo", (req, res, next) => {
+    console.log("foo");
+    res.send("foo");
+  });
 
   //   // error handling endware
   app.use((err, req, res, next) => {
