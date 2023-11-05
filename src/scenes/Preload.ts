@@ -13,7 +13,11 @@ class Preload extends PhaserSceneTool {
       frameHeight: 32,
     });
 
-    // this.loadingImagesMockup();
+    this.load.image("vendingMachine", "assets/vendingMachine.png");
+    this.load.image("mainroom", "assets/mainroom_wife2.png");
+
+    this.load.image("aris", "assets/aris.png");
+    this.load.image("momoi", "assets/momoi.png");
 
     // this.load.audio("jumpSound", "assets/sounds/jump.mp3");
   }
@@ -86,20 +90,28 @@ class Preload extends PhaserSceneTool {
     });
   }
 
-  create() {
-    const logoExposeSetting: Number = this.isLocal ? 300 : 2000;
+  async create() {
+    const logoExposeSetting: Number = this.isLocal ? 100 : 1000;
 
     this.cameras.main.fadeIn(1000, 255, 255, 255);
 
-    const logo = this.add.image(
-      this.gameWidth / 2 - 10,
-      this.gameHeight / 2 + 20,
+    const logo = this.add
+      .image(this.gameWidth / 2, this.gameHeight / 2, "kbb")
+      .setScale(0.3);
+    await this.setDelay(logoExposeSetting);
+    this.cameras.main.fadeOut(logoExposeSetting, 255, 255, 255);
+    await this.setDelay(logoExposeSetting);
+    logo.destroy();
+    this.cameras.main.fadeIn(logoExposeSetting, 255, 255, 255);
+    const logo2 = this.add.image(
+      this.gameWidth / 2,
+      this.gameHeight / 2,
       "interpretLogoWithCat"
     );
-
-    setTimeout(() => {
-      this.scene.start("GameScene");
-    }, logoExposeSetting);
+    await this.setDelay(logoExposeSetting);
+    this.cameras.main.fadeOut(logoExposeSetting, 255, 255, 255);
+    await this.setDelay(logoExposeSetting);
+    this.scene.start("GameScene");
   }
 }
 

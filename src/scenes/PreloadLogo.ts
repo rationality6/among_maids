@@ -10,6 +10,10 @@ class PreloadLogo extends PhaserSceneTool {
       "interpretLogoWithCat",
       "assets/logo/interpret_logo_with_cat.png"
     );
+    this.load.image(
+      "kbb",
+      "assets/logo/kbb.jpg"
+    );
   }
   create(){
     this.scene.start("PreloadScene");

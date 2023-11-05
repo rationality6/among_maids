@@ -57,13 +57,7 @@ const startListening = () => {
   );
   const io = new Server(server);
 
-  io.on("connection", (socket) => {
-    console.log("a user connected");
-
-    socket.on("disconnect", () => {
-      console.log("user disconnected");
-    });
-  });
+  require("./socket")(io);
 };
 
 async function bootApp() {
