@@ -1,5 +1,8 @@
 class Player extends Phaser.Physics.Arcade.Sprite {
   speed: any = 225;
+  cursors;
+
+  playerId: string;
 
   constructor(scene: any, x: number, y: number, key: string) {
     super(scene, x, y, key);
@@ -9,27 +12,58 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.13);
 
     this.scene.events.on(Phaser.Scenes.Events.UPDATE, this.update, this);
+
+    this.setCollideWorldBounds(true);
+
+    this.init();
+  }
+
+  init() {
+    this.cursors = this.scene.input.keyboard.createCursorKeys();
   }
 
   update() {
     this.body.setVelocity(0);
 
-    if (this.scene.cursors.left.isDown) {
-      this.body.setVelocityX(-this.speed);
-      this.setFlipX(true);
-    } else if (this.scene.cursors.right.isDown) {
-      this.body.setVelocityX(this.speed);
-      this.setFlipX(false);
-    }
-    // Vertical movement
-    if (this.scene.cursors.up.isDown) {
-      this.body.setVelocityY(-this.speed);
-    } else if (this.scene.cursors.down.isDown) {
-      this.body.setVelocityY(this.speed);
+    // Horizental movement
+    if (this.cursors.left.isDown) {
+      this.scene.player.setVelocityX(-this.speed);
+      this.scene.player.setFlipX(true);
+    } else if (this.cursors.right.isDown) {
+      this.scene.player.setVelocityX(this.speed);
+      this.scene.player.setFlipX(false);
     }
 
-    // Normalize and scale the velocity so that astronaut can't move faster along a diagonal
+    // Vertical movement
+    if (this.cursors.up.isDown) {
+      this.scene.player.setVelocityY(-this.speed);
+    } else if (this.cursors.down.isDown) {
+      this.scene.player.setVelocityY(this.speed);
+    }
+
+    // // Normalize and scale the velocity so that astronaut can't move faster along a diagonal
     this.body.velocity.normalize().scale(this.speed);
+
+    // emit player movement
+    var x = this.scene.player.x;
+    var y = this.scene.player.y;
+    if (
+      this.scene.player.oldPosition &&
+      (x !== this.scene.player.oldPosition.x || y !== this.scene.player.oldPosition.y)
+    ) {
+      this.moving = true;
+      this.scene.socket.emit("playerMovement", {
+        x: this.scene.player.x,
+        y: this.scene.player.y,
+        roomKey: this.scene.roomKey,
+      });
+    }
+    // save old position data
+    this.scene.player.oldPosition = {
+      x: this.scene.player.x,
+      y: this.scene.player.y,
+      rotation: this.scene.player.rotation,
+    };
   }
 }
 

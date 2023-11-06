@@ -1,5 +1,8 @@
 import PhaserSceneTool from "./PhaserSceneTool";
 
+import TaskScene from './TaskScene';
+import TaskScene2 from './TaskScene2';
+
 class Preload extends PhaserSceneTool {
   constructor() {
     super("PreloadScene");
@@ -19,6 +22,11 @@ class Preload extends PhaserSceneTool {
     this.load.image("aris", "assets/aris.png");
     this.load.image("momoi", "assets/momoi.png");
 
+    this.load.image("seo2", "assets/seo2.jpg");
+
+    this.scene.add("TaskScene", TaskScene);
+    this.scene.add("TaskScene2", TaskScene2);
+    
     // this.load.audio("jumpSound", "assets/sounds/jump.mp3");
   }
 

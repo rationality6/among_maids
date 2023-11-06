@@ -17,6 +17,11 @@ class GameScene extends PhaserSceneTool {
   player: any;
   cursors: any;
 
+  players: any;
+  numPlayers: number;
+
+  otherPlayers: Phaser.Physics.Arcade.Group;
+
   constructor() {
     super("GameScene");
   }
@@ -32,25 +37,28 @@ class GameScene extends PhaserSceneTool {
     this.controlPanelGroup = this.physics.add.staticGroup({
       classType: ControlPanel,
     });
+
+    // CREATE OTHER PLAYERS GROUP
+    this.otherPlayers = this.physics.add.group();
+
     this.controlPanelVendingMachine = this.controlPanelGroup.create(
       300,
       300,
       "vendingMachine"
     );
 
-    this.vendingMachine1 = this.add
-      .image(280, 280, "vendingMachine")
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(1);
+    this.controlPanelVendingMachine2 = this.controlPanelGroup.create(
+      350,
+      300,
+      "vendingMachine"
+    );
 
-    this.vendingMachine2 = this.add
-      .image(350, 280, "vendingMachine")
-      .setScale(1)
-      .setOrigin(0, 0)
-      .setDepth(1);
-
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.controlPanelVendingMachine.on("pointerdown", () => {
+      this.scene.switch("TaskScene");
+    });
+    this.controlPanelVendingMachine2.on("pointerdown", () => {
+      this.scene.switch("TaskScene2");
+    });
 
     this.socket = io();
 
@@ -61,12 +69,52 @@ class GameScene extends PhaserSceneTool {
       this.socket.emit("joinRoom", this.roomKey);
     });
 
-    this.addPlayer({ x: 200, y: 200 });
+    // JOINED ROOM - SET STATE
+    this.socket.on("setState", (state) => {
+      const { roomKey, players, numPlayers } = state;
+
+      // STATE
+      this.roomKey = roomKey;
+      this.players = players;
+      this.numPlayers = numPlayers;
+    });
+
+    this.socket.on("playerMoved", (playerInfo) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (playerInfo.playerId === otherPlayer.playerId) {
+          otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+        }
+      });
+    });
+
+    // PLAYERS
+    this.socket.on("currentPlayers", (arg) => {
+      const { players, numPlayers } = arg;
+      this.numPlayers = numPlayers;
+      Object.keys(players).forEach((id) => {
+        if (players[id].playerId === this.socket.id) {
+          this.addPlayer(players[id]);
+        } else {
+          this.addOtherPlayers(players[id]);
+        }
+      });
+    });
+
+    this.socket.on("newPlayer", (arg) => {
+      const { playerInfo, numPlayers } = arg;
+      this.addOtherPlayers(playerInfo);
+      this.numPlayers = numPlayers;
+    });
   }
 
   addPlayer(playerInfo) {
-    this.joined = true;
     this.player = new Aris(this, playerInfo.x, playerInfo.y);
+  }
+
+  addOtherPlayers(playerInfo) {
+    const otherPlayer = new Aris(this, playerInfo.x, playerInfo.y);
+    otherPlayer.playerId = playerInfo.playerId;
+    this.otherPlayers.add(otherPlayer);
   }
 
   update() {
@@ -74,13 +122,24 @@ class GameScene extends PhaserSceneTool {
     if (this.player) {
       this.physics.add.overlap(
         this.player,
-        this.vendingMachine1,
-        this.highlightControlPanel,
+        this.controlPanelVendingMachine,
+        this.highlightVendingMachine,
         null,
         this
       );
       //CONTROL PANEL: NOT OVERLAPPED
-      this.checkOverlap(this.player, this.vendingMachine1);
+      this.checkOverlap(this.player, this.controlPanelVendingMachine);
+    }
+    if (this.player) {
+      this.physics.add.overlap(
+        this.player,
+        this.controlPanelVendingMachine2,
+        this.highlightVendingMachine,
+        null,
+        this
+      );
+      //CONTROL PANEL: NOT OVERLAPPED
+      this.checkOverlap(this.player, this.controlPanelVendingMachine2);
     }
   }
 
@@ -90,16 +149,16 @@ class GameScene extends PhaserSceneTool {
     if (
       !Phaser.Geom.Intersects.RectangleToRectangle(boundsPlayer, boundsPanel)
     ) {
-      this.deactivateControlPanel(vendingMachine);
+      this.deactivateVendingMachine(vendingMachine);
     }
   }
 
-  highlightControlPanel(astronaut, controlPanel) {
-    controlPanel.setTint(0xbdef83);
-    controlPanel.setInteractive();
+  highlightVendingMachine(astronaut, vendingMachine) {
+    vendingMachine.setTint(0xbdef83);
+    vendingMachine.setInteractive();
   }
 
-  deactivateControlPanel(vendingMachine) {
+  deactivateVendingMachine(vendingMachine) {
     vendingMachine.clearTint();
     vendingMachine.disableInteractive();
   }
