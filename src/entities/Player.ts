@@ -23,6 +23,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
+    if (!this || !this.body) {
+      return;
+    }
+
     this.body.setVelocity(0);
 
     // Horizental movement
@@ -45,13 +49,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.velocity.normalize().scale(this.speed);
 
     // emit player movement
-    var x = this.scene.player.x;
-    var y = this.scene.player.y;
+    let x = this.scene.player.x;
+    let y = this.scene.player.y;
     if (
       this.scene.player.oldPosition &&
-      (x !== this.scene.player.oldPosition.x || y !== this.scene.player.oldPosition.y)
+      (x !== this.scene.player.oldPosition.x ||
+        y !== this.scene.player.oldPosition.y)
     ) {
-      this.moving = true;
       this.scene.socket.emit("playerMovement", {
         x: this.scene.player.x,
         y: this.scene.player.y,
