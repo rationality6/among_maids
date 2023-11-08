@@ -50,6 +50,11 @@ module.exports = (io) => {
     // when a player moves, update the player data
     socket.on("playerMovement", (data) => {
       const { x, y, roomKey } = data;
+
+      if (!gameRooms[roomKey]) {
+        return;
+      }
+
       gameRooms[roomKey].players[socket.id].x = x;
       gameRooms[roomKey].players[socket.id].y = y;
       // emit a message to all players about the player that moved
@@ -57,6 +62,9 @@ module.exports = (io) => {
         .to(roomKey)
         .emit("playerMoved", gameRooms[roomKey].players[socket.id]);
     });
+
+    socket.on("connect_error", (err) => handleErrors(err));
+    socket.on("connect_failed", (err) => handleErrors(err));
 
     socket.on("getRoomCode", async () => {
       if (Object.keys(gameRooms).length > 0) {

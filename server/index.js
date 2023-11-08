@@ -58,6 +58,7 @@ const startListening = () => {
   const io = new Server(server);
 
   require("./socket")(io);
+  require("./socket/bot.js")(io);
 };
 
 async function bootApp() {
